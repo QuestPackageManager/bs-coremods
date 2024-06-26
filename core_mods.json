@@ -867,9 +867,9 @@
             },
             {
                 "id": "bsml",
-                "version": "0.4.41",
-                "downloadLink": "https://github.com/RedBrumbler/Quest-BSML/releases/download/v0.4.41/BSML.qmod",
-                "filename": "BSML_v0_4_41.qmod"
+                "version": "0.4.42",
+                "downloadLink": "https://github.com/RedBrumbler/Quest-BSML/releases/download/v0.4.42/BSML.qmod",
+                "filename": "BSML_v0_4_42.qmod"
             },
             {
                 "id": "songcore",
@@ -891,9 +891,9 @@
             },
             {
                 "id": "songdownloader",
-                "version": "0.7.4",
-                "downloadLink": "https://github.com/darknight1050/SongDownloader/releases/download/v0.7.4/SongDownloader.qmod",
-                "filename": "songdownloader_v0_7_4.qmod"
+                "version": "0.8.0",
+                "downloadLink": "https://github.com/darknight1050/SongDownloader/releases/download/v0.8.0/SongDownloader.qmod",
+                "filename": "songdownloader_v0_8_0.qmod"
             },
             {
                 "id": "unicode",
