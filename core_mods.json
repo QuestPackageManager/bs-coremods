@@ -891,9 +891,9 @@
             },
             {
                 "id": "songdownloader",
-                "version": "0.8.0",
-                "downloadLink": "https://github.com/darknight1050/SongDownloader/releases/download/v0.8.0/SongDownloader.qmod",
-                "filename": "songdownloader_v0_8_0.qmod"
+                "version": "0.8.2",
+                "downloadLink": "https://github.com/darknight1050/SongDownloader/releases/download/v0.8.2/SongDownloader.qmod",
+                "filename": "songdownloader_v0_8_2.qmod"
             },
             {
                 "id": "unicode",
