@@ -914,9 +914,9 @@
         "mods": [
             {
                 "id": "custom-types",
-                "version": "0.18.12",
+                "version": "0.18.2",
                 "downloadLink": "https://github.com/QuestPackageManager/Il2CppQuestTypePatching/releases/download/v0.18.2/CustomTypes.qmod",
-                "filename": "CustomTypes_v0_18_12.qmod"
+                "filename": "CustomTypes_v0_18_2.qmod"
             },
             {
                 "id": "lapiz",
