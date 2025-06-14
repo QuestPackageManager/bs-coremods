@@ -1,0 +1,164 @@
+# Simple workflow for deploying static content to GitHub Pages
+name: Build and deploy qmods
+
+on:
+  # Runs on pushes targeting the default branch
+  push:
+    branches: ["main"]
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Build core qmods
+        run: |
+          #!/bin/bash
+          set -euo pipefail
+
+          # semverDate:
+          # Converts an ISO date string (possibly with fractional seconds)
+          # to Unix time (rounding down to whole seconds), converts it back
+          # to ISO‑8601 (UTC, no fractional seconds) and returns a semver-like string.
+          semverDate() {
+              local input="$1"
+              # Convert input to Unix time (rounding down fractional seconds)
+              local unix_time
+              unix_time=$(date -d "$input" +%s)
+              # Convert Unix time back to an ISO‑8601 date (UTC, no fractional seconds)
+              local iso_date
+              iso_date=$(date -u -d "@$unix_time" +'%Y-%m-%dT%H:%M:%SZ')
+              # Split into date and time parts
+              local date_part="${iso_date%%T*}"
+              local time_part="${iso_date#*T}"
+              IFS=- read -r year month day <<< "$date_part"
+              month=$((10#$month))
+              day=$((10#$day))
+              # Remove colons and dots from the time part (keeping trailing "Z")
+              time_part=$(echo "$time_part" | tr -d ':.')
+              echo "${year}.${month}.${day}-${time_part}"
+          }
+
+          DEPLOY_PATH="."
+          CORE_JSON_PATH="./core_mods.json"
+          INDEX_PATH="${DEPLOY_PATH}/index.html"
+
+          mkdir -p "$DEPLOY_PATH"
+
+          echo '<html><head><title>Beat Saber Core Mods</title></head><body><ul>' > "$INDEX_PATH"
+
+          if [[ ! -f "$CORE_JSON_PATH" ]]; then
+              echo "Error: $CORE_JSON_PATH not found" >&2
+              exit 1
+          fi
+
+          jq -c 'to_entries[]' "$CORE_JSON_PATH" | while read -r entry; do
+              # Extract the game version and associated data
+              gameVersion=$(echo "$entry" | jq -r '.key')
+              lastUpdated=$(echo "$entry" | jq -r '.value.lastUpdated')
+              mods=$(echo "$entry" | jq -c '.value.mods')
+
+              # Determine the modloader based on the game version.
+              if [[ "$gameVersion" > "1.28.0_4124311467" ]]; then
+                  modloader="Scotland2"
+              else
+                  modloader="QuestLoader"
+              fi
+
+              # Compute the semver date string.
+              semver=$(semverDate "$lastUpdated")
+
+              # Build the dependencies array from the mods.
+              dependencies=$(echo "$mods" | jq -c 'map({
+                  id: .id,
+                  version: ("^" + .version),
+                  downloadIfMissing: .downloadLink
+              })')
+
+              # Construct the mod JSON object.
+              mod_json=$(jq -n --arg qpversion "0.1.1" \
+                               --arg name "Core mods for $gameVersion" \
+                               --arg id "CoreMods_$gameVersion" \
+                               --arg author "QuestPackageManager" \
+                               --arg description "Downloads all Core mods for Beat Saber version $gameVersion" \
+                               --arg version "$semver" \
+                               --arg packageId "com.beatgames.beatsaber" \
+                               --arg packageVersion "$gameVersion" \
+                               --arg modloader "$modloader" \
+                               --argjson dependencies "$dependencies" \
+                               '{
+                                  _QPVersion: $qpversion,
+                                  name: $name,
+                                  id: $id,
+                                  author: $author,
+                                  description: $description,
+                                  version: $version,
+                                  packageId: $packageId,
+                                  packageVersion: $packageVersion,
+                                  modloader: $modloader,
+                                  modFiles: [],
+                                  libraryFiles: [],
+                                  fileCopies: [],
+                                  copyExtensions: [],
+                                  dependencies: $dependencies
+                                }')
+
+              # Write the mod JSON to a temporary file.
+              echo "$mod_json" > mod.json
+
+              # Convert lastUpdated to a rounded ISO‑8601 timestamp (dropping fractional seconds)
+              rounded_date=$(date -d "$lastUpdated" +'%Y-%m-%dT%H:%M:%SZ')
+              touch -d "$rounded_date" mod.json
+
+              # Define the output zip file (with .qmod extension).
+              zipPath="${DEPLOY_PATH}/${gameVersion}.qmod"
+
+              # Remove any existing zip archive.
+              rm -f "$zipPath"
+
+              # Compress mod.json into the archive (using -j to junk the path)
+              zip -j "$zipPath" mod.json >/dev/null
+
+              # Update the zip file's timestamp.
+              touch -d "$rounded_date" "$zipPath"
+
+              # Append an HTML list entry to index.html.
+              echo "<li><a href=\"${gameVersion}.qmod\">${gameVersion}.qmod</a></li>" >> "$INDEX_PATH"
+
+              # Remove the temporary mod.json file.
+              rm -f mod.json
+          done
+
+          # Write the closing HTML tags to index.html.
+          echo '</ul></body></html>' >> "$INDEX_PATH"
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
