@@ -981,7 +981,7 @@
         ]
     },
     "1.40.6_6407": {
-        "lastUpdated": "2025-04-27T22:10:00Z",
+        "lastUpdated": "2025-07-03T17:00:00Z",
         "mods": [
             {
                 "id": "custom-types",
@@ -1033,15 +1033,15 @@
             },
             {
                 "id": "datakeeper",
-                "version": "0.2.2",
-                "downloadLink": "https://github.com/Metalit/PlayerDataKeeper/releases/download/v0.2.2/PlayerDataKeeper.qmod",
-                "filename": "PlayerDataKeeper_V0_2_2.qmod"
+                "version": "0.2.3",
+                "downloadLink": "https://github.com/Metalit/PlayerDataKeeper/releases/download/v0.2.3/PlayerDataKeeper.qmod",
+                "filename": "PlayerDataKeeper_V0_2_3.qmod"
             },
             {
                 "id": "metacore",
-                "version": "1.3.0",
-                "downloadLink": "https://github.com/Metalit/MetaCore/releases/download/v1.3.0/MetaCore.qmod",
-                "filename": "MetaCore_V1_3_0.qmod"
+                "version": "1.3.2",
+                "downloadLink": "https://github.com/Metalit/MetaCore/releases/download/v1.3.2/MetaCore.qmod",
+                "filename": "MetaCore_V1_3_2.qmod"
             },
             {
                 "id": "FakeId",
