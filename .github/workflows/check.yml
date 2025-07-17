@@ -1,0 +1,19 @@
+name: Deno Check
+
+on:
+    push:
+        branches:
+            - main
+    pull_request:
+
+jobs:
+    deno-check:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - name: Set up Deno
+              uses: denoland/setup-deno@v1
+            #   with:
+                    # deno-version: v1.x
+            - name: Run deno check
+              run: deno run -R -N -E check.ts
