@@ -42,6 +42,8 @@ const json: CoreModListing = JSON.parse(
   await Deno.readTextFile("./core_mods.json")
 );
 
+delete json["$schema"]; // Remove schema reference if present
+
 // ensure all have valid time
 Object.entries(json).forEach(([version, coreMods]) => {
   console.log(`Checking version ${version}`);
