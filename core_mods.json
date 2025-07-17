@@ -1,5 +1,4 @@
 {
-    "$schema": "https://raw.githubusercontent.com/QuestPackageManager/bs-coremods/refs/heads/main/core_mods.schema.json",
     "1.13.0": {
         "lastUpdated": "2021-01-26T01:16:10.2928323Z",
         "mods": [
