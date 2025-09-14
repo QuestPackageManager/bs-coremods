@@ -1107,7 +1107,7 @@
         ]
     },
     "1.40.8_7379": {
-        "lastUpdated": "2025-07-26T03:00:00Z",
+        "lastUpdated": "2025-09-14T04:30:00Z",
         "mods": [
             {
                 "id": "custom-types",
@@ -1165,9 +1165,9 @@
             },
             {
                 "id": "metacore",
-                "version": "1.4.0",
-                "downloadLink": "https://github.com/Metalit/MetaCore/releases/download/v1.4.0/MetaCore.qmod",
-                "filename": "MetaCore_v1_4_0.qmod"
+                "version": "1.6.2",
+                "downloadLink": "https://github.com/Metalit/MetaCore/releases/download/v1.6.2/MetaCore.qmod",
+                "filename": "MetaCore_v1_6_2.qmod"
             },
             {
                 "id": "FakeId",
