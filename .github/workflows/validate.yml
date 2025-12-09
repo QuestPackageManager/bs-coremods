@@ -1,0 +1,57 @@
+name: Validate core_mods.json
+
+on:
+  pull_request:
+  push:
+    branches: 'main'
+
+jobs:
+  validate:
+    name: ${{ matrix.job.name }}
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    strategy:
+      matrix:
+        job:
+          - name: Parse JSON
+            script: parse.ts
+          - name: Validate lastUpdated timestamps
+            script: validate-timestamps.ts
+          - name: Validate against schema
+            script: validate-schema.ts
+
+    steps:
+      - name: Checkout repository
+        if: github.event_name != 'pull_request'
+        uses: actions/checkout@v4
+      
+      - name: Checkout main branch
+        if: github.event_name == 'pull_request'
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Checkout PR changes
+        if: github.event_name == 'pull_request'
+        uses: actions/checkout@v4
+        with:
+          path: pr
+      
+      - name: Copy core_mods.json and schema from PR
+        if: github.event_name == 'pull_request'
+        run: |
+          mv pr/core_mods.json core_mods.json
+          
+          if [[ -f pr/core_mods.schema.json ]]; then
+            mv pr/core_mods.schema.json core_mods.schema.json
+          fi
+
+          rm -rf pr
+
+      - uses: denoland/setup-deno@v2
+
+      - name: Run script ${{ matrix.job.script }}
+        shell: bash
+        run: |
+          deno run --allow-read ".github/scripts/${{ matrix.job.script }}"
+        
